@@ -212,7 +212,7 @@ var completeEditTask = function (taskName, taskType, taskId) {
     alert("Task Updated!");
 
     // loop through tasks array and task object with new content
-    for (var i = 0; i <tasks.length; i++) {
+    for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id === parseInt(taskId)) {
             tasks[i].name = taskName;
             tasks[i].type = taskType;
@@ -297,7 +297,7 @@ var dropTaskHandler = function (event) {
     dropZoneEl.appendChild(draggableElement);
 
     // loop through tasks array tot find and update the updated task's status
-    for (var i = 0; i <tasks.length; i++) {
+    for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id === parseInt(id)) {
             tasks[i].status = statusSelectEl.value.toLowerCase();
         }
@@ -307,16 +307,35 @@ var dropTaskHandler = function (event) {
     saveTasks();
 };
 
-var dragLeaveHandler = function(event) {
+var dragLeaveHandler = function (event) {
     var taskListEl = event.target.closest(".task-list");
     if (taskListEl) {
         taskListEl.removeAttribute("style");
     }
 }
 
-// save tasks to local storage
+// save tasks to local storage and convert array to string data
 var saveTasks = function () {
     localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+// get tasks from local storage
+var loadTasks = function () {
+    // convert tasks from the stringified format back into an array of objects
+    var savedTasks = localStorage.getItem("tasks");
+    console.log(tasks);
+
+    if (!savedTasks) {
+        return false;
+    }
+
+    savedTasks = JSON.parse(savedTasks);
+
+    // loop through savedtasks array
+    for (var i = 0; i < savedTasks.length; i++) {
+        // pass each task object into the 'createTaskEl()` function
+        createTaskEl(savedTasks[i]);
+    }
 }
 
 // Event Listeners Section
@@ -336,3 +355,5 @@ pageContentEl.addEventListener("dragover", dropZoneDragHandler);
 pageContentEl.addEventListener("drop", dropTaskHandler);
 
 pageContentEl.addEventListener("dragleave", dragLeaveHandler);
+
+loadTasks();
